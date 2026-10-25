@@ -1,0 +1,11 @@
+{
+  "name": "oak-ocean-vpn",
+  "version": "2.0.0",
+  "description": "OAK Ocean Liquid Glass VPN Client",
+  "main": "index.html",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

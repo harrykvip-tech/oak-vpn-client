@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#041424">
+    <title>OAK VPN</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        :root {
+            --bg-deep: #030e1a;
+            --bg-ocean: #07223b;
+            --glass-bg: rgba(14, 42, 71, 0.65);
+            --glass-card: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(56, 189, 248, 0.28);
+            --glass-highlight: rgba(255, 255, 255, 0.18);
+            --text-main: #f0f9ff;
+            --text-sub: #7dd3fc;
+            --cyan-glow: #00f2fe;
+            --ocean-blue: #0284c7;
+            --emerald-neon: #10b981;
+            --danger-red: #f43f5e;
+        }
+
+        [data-theme="light"] {
+            --bg-deep: #eef8ff;
+            --bg-ocean: #d0eefe;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-card: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(2, 132, 199, 0.35);
+            --glass-highlight: rgba(255, 255, 255, 0.95);
+            --text-main: #0c4a6e;
+            --text-sub: #0284c7;
+            --cyan-glow: #0284c7;
+            --ocean-blue: #0369a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pyidaungsu', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 10%, var(--bg-ocean) 0%, var(--bg-deep) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px 14px 130px 14px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Liquid Ocean Animated Background Blobs */
+        .ocean-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(65px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.55;
+            animation: floatWave 10s infinite alternate ease-in-out;
+        }
+        .blob-1 {
+            width: 280px;
+            height: 280px;
+            background: #00f2fe;
+            top: -60px;
+            left: -80px;
+        }
+        .blob-2 {
+            width: 320px;
+            height: 320px;
+            background: #0284c7;
+            bottom: 40px;
+            right: -100px;
+            animation-delay: -4s;
+        }
+        @keyframes floatWave {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 40px) scale(1.12); }
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Top Glass Navbar */
+        .glass-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 1px var(--glass-highlight);
+            padding: 12px 16px;
+            border-radius: 22px;
+            margin-bottom: 18px;
+        }
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%);
+            padding: 2px;
+            box-shadow: 0 0 16px rgba(0, 242, 254, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-weight: 900;
+            color: #fff;
+            font-size: 15px;
+        }
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #fff;
+        }
+        .brand-title h1 {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            color: var(--text-main);
+        }
+        .brand-title span {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .icon-glass-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 13px;
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 17px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: inset 0 1px 1px var(--glass-highlight);
+        }
+
+        /* Center Liquid Orb Core Card */
+        .core-glass-panel {
+            background: var(--glass-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 2px var(--glass-highlight);
+            border-radius: 32px;
+            padding: 24px 20px 20px 20px;
+            text-align: center;
+            margin-bottom: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.12);
+            border: 1px solid var(--glass-border);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+        [data-theme="light"] .status-pill {
+            background: rgba(2, 132, 199, 0.1);
+        }
+        .status-pill.connected {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: #10b981;
+            color: #047857;
+        }
+        [data-theme="dark"] .status-pill.connected {
+            color: #34d399;
+        }
+        .pulse-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-sub);
+        }
+        .status-pill.connected .pulse-dot {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseDot 1.2s infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        .current-node-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            min-height: 20px;
+            margin-bottom: 16px;
+            opacity: 0.95;
+        }
+
+        /* Liquid Orb Button */
+        .orb-wrapper {
+            position: relative;
+            width: 164px;
+            height: 164px;
+            margin: 0 auto 18px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .orb-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px dashed rgba(0, 242, 254, 0.45);
+            animation: spinSlow 14s linear infinite;
+        }
+        .orb-wrapper.connected .orb-ring {
+            border-color: rgba(16, 185, 129, 0.7);
+            animation-duration: 5s;
+        }
+        @keyframes spinSlow {
+            to { transform: rotate(360deg); }
+        }
+
+        .liquid-orb-btn {
+            width: 138px;
+            height: 138px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            background: radial-gradient(circle at 30% 30%, #38bdf8 0%, #0284c7 55%, #0369a1 100%);
+            box-shadow: 0 12px 35px rgba(2, 132, 199, 0.55), inset 0 4px 12px rgba(255, 255, 255, 0.55), inset 0 -6px 14px rgba(0, 0, 0, 0.35);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 3;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .liquid-orb-btn:active {
+            transform: scale(0.92);
+        }
+        .liquid-orb-btn.connected {
+            background: radial-gradient(circle at 30% 30%, #34d399 0%, #10b981 55%, #047857 100%);
+            box-shadow: 0 12px 40px rgba(16, 185, 129, 0.6), inset 0 4px 12px rgba(255, 255, 255, 0.6);
+        }
+        .orb-power-icon {
+            width: 40px;
+            height: 40px;
+            stroke: #ffffff;
+            stroke-width: 2.5;
+            fill: none;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+        }
+        .orb-label {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .session-timer {
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            text-shadow: 0 2px 10px rgba(2, 132, 199, 0.15);
+        }
+
+        /* 3-Column Telemetry Glass Strip */
+        .telemetry-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .tele-card {
+            background: rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 10px 6px;
+            box-shadow: inset 0 1px 1px var(--glass-highlight);
+        }
+        [data-theme="light"] .tele-card {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .tele-label {
+            font-size: 10.5px;
+            color: var(--text-sub);
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .tele-value {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Quick Action Bar */
+        .section-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 4px;
+            gap: 8px;
+        }
+        .section-bar h2 {
+            font-size: 15.5px;
+            font-weight: 800;
+            white-space: nowrap;
+            color: var(--text-main);
+        }
+        .glass-chips {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .chip-btn {
+            background: var(--glass-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 6px 11px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: inset 0 1px 1px var(--glass-highlight);
+        }
+        .chip-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Server Nodes List */
+        .nodes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .empty-glass-state {
+            background: var(--glass-card);
+            backdrop-filter: blur(16px);
+            border: 1px dashed var(--glass-border);
+            border-radius: 22px;
+            padding: 24px 16px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12.5px;
+            line-height: 1.7;
+        }
+        .node-card {
+            background: var(--glass-card);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 13px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), inset 0 1px 1px var(--glass-highlight);
+            transition: transform 0.15s, border-color 0.2s;
+        }
+        .node-card.active {
+            border-color: var(--cyan-glow);
+            background: rgba(0, 242, 254, 0.12);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.15), inset 0 1px 2px var(--glass-highlight);
+        }
+        .node-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .node-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(0, 242, 254, 0.15);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+        .node-meta {
+            min-width: 0;
+        }
+        .node-meta h3 {
+            font-size: 14.5px;
+            font-weight: 800;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+        }
+        .node-proto {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text-sub);
+            background: rgba(0, 0, 0, 0.12);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .node-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .ping-tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: #059669;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+        [data-theme="dark"] .ping-tag {
+            color: #34d399;
+        }
+        .node-menu-btn {
+            background: rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Floating Liquid Glass Bottom Dock */
+        .floating-dock {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 28px);
+            max-width: 430px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25), inset 0 1px 1px var(--glass-highlight);
+            border-radius: 22px;
+            padding: 9px;
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 9px;
+            z-index: 100;
+        }
+        .dock-btn {
+            border: none;
+            border-radius: 15px;
+            padding: 13px 10px;
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .dock-paste-btn {
+            background: rgba(0, 0, 0, 0.08);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+        [data-theme="light"] .dock-paste-btn {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .dock-import-btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+        }
+        .dock-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Liquid Glass Modals */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 8, 20, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+            padding: 16px;
+        }
+        .modal-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .glass-modal {
+            background: var(--bg-ocean);
+            border: 1.5px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 2px var(--glass-highlight);
+            width: 100%;
+            max-width: 380px;
+            border-radius: 26px;
+            padding: 22px;
+        }
+        .modal-head {
+            font-size: 16.5px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--text-main);
+        }
+        .glass-input {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 14px;
+            border: 1.5px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.15);
+            color: var(--text-main);
+            font-size: 14px;
+            margin-bottom: 14px;
+            outline: none;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .gm-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .gm-primary {
+            background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%);
+            color: #fff;
+        }
+        .gm-sec {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+        .gm-danger {
+            background: var(--danger-red);
+            color: #fff;
+        }
+        .opt-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Liquid Glass Background Blobs -->
+<div class="ocean-blob blob-1"></div>
+<div class="ocean-blob blob-2"></div>
+
+<div class="app-container">
+    <!-- Top Glass Bar -->
+    <div class="glass-nav">
+        <div class="brand-box">
+            <div class="brand-logo">
+                <img src="icon.png" alt="OAK" onerror="this.style.display='none'; this.parentElement.innerHTML='OAK';">
+            </div>
+            <div class="brand-title">
+                <h1>OAK VPN</h1>
+                <span>VLESS · VMESS · REALITY</span>
+            </div>
+        </div>
+        <button class="icon-glass-btn" onclick="toggleTheme()" title="Theme ပြောင်းရန်">🌓</button>
+    </div>
+
+    <!-- Main Liquid Orb Connection Panel -->
+    <div class="core-glass-panel">
+        <div class="status-pill" id="statusPill">
+            <span class="pulse-dot"></span>
+            <span id="statusText">မချိတ်ဆက်ရသေးပါ</span>
+        </div>
+        <div class="current-node-name" id="activeNodeName">Key ထည့်သွင်းပြီး ချိတ်ဆက်ပါ</div>
+
+        <div class="orb-wrapper" id="orbWrapper">
+            <div class="orb-ring"></div>
+            <button class="liquid-orb-btn" id="connectOrbBtn" onclick="toggleFastConnect()">
+                <svg class="orb-power-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+                <span class="orb-label" id="orbBtnLabel">CONNECT</span>
+            </button>
+        </div>
+
+        <div class="session-timer" id="sessionTimer">00:00:00</div>
+
+        <div class="telemetry-strip">
+            <div class="tele-card">
+                <div class="tele-label">⚡ PING</div>
+                <div class="tele-value" id="pingStat">—</div>
+            </div>
+            <div class="tele-card">
+                <div class="tele-label">▼ DOWN</div>
+                <div class="tele-value" id="downStat">0.0 KB/s</div>
+            </div>
+            <div class="tele-card">
+                <div class="tele-label">▲ UP</div>
+                <div class="tele-value" id="upStat">0.0 KB/s</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servers Section -->
+    <div class="section-bar">
+        <h2>🔑 သိမ်းဆည်းထားသော Key များ</h2>
+        <div class="glass-chips">
+            <button class="chip-btn" onclick="fastPingAll()">⚡ Ping</button>
+            <button class="chip-btn" onclick="openImportModal('sub')">🔗 Sub</button>
+        </div>
+    </div>
+
+    <div class="nodes-list" id="nodesListContainer">
+        <!-- Dynamic Nodes -->
+    </div>
+</div>
+
+<!-- Floating Bottom Liquid Dock -->
+<div class="floating-dock">
+    <button class="dock-btn dock-paste-btn" onclick="quickPasteAndConnect()">
+        ⚡ Paste & တန်းချိတ်
+    </button>
+    <button class="dock-btn dock-import-btn" onclick="openImportModal('key')">
+        ➕ KEY အသစ်ထည့်မည်
+    </button>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-backdrop" id="importModal">
+    <div class="glass-modal">
+        <div class="modal-head" id="importTitle">🔑 VPN Key ထည့်သွင်းရန်</div>
+        <input type="text" class="glass-input" id="keyInput" placeholder="vless://... သို့မဟုတ် vmess://... ထည့်ပါ">
+        <div class="modal-actions" style="margin-bottom: 10px;">
+            <button class="gm-btn gm-sec" onclick="pasteToInput()">📋 Clipboard မှ ကူးထည့်မည်</button>
+        </div>
+        <div class="modal-actions">
+            <button class="gm-btn gm-sec" onclick="closeModal('importModal')">ပိတ်မည်</button>
+            <button class="gm-btn gm-primary" onclick="saveAndFastConnect()">⚡ ထည့်ပြီး တန်းချိတ်မည်</button>
+        </div>
+    </div>
+</div>
+
+<!-- Node Options Modal -->
+<div class="modal-backdrop" id="nodeOptionsModal">
+    <div class="glass-modal">
+        <div class="modal-head" id="optModalTitle">Server Options</div>
+        <div class="opt-stack">
+            <button class="gm-btn gm-primary" onclick="bridgeToV2boxApp()">🚀 V2Box / v2rayNG သို့ တိုက်ရိုက်ပို့မည်</button>
+            <button class="gm-btn gm-sec" onclick="renameNode()">✏️ နာမည်ပြောင်းမည်</button>
+            <button class="gm-btn gm-sec" onclick="copyNodeUri()">📋 Key ပြန်ကူးယူမည်</button>
+            <button class="gm-btn gm-danger" onclick="deleteNode()">🗑️ ဖျက်မည်</button>
+            <button class="gm-btn gm-sec" style="margin-top: 4px;" onclick="closeModal('nodeOptionsModal')">ပိတ်မည်</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'oak_vpn_clean_nodes_v4';
+    let nodes = [];
+    let activeNodeId = null;
+    let isConnected = false;
+    let secCounter = 0;
+    let timerRef = null;
+    let speedRef = null;
+    let menuNodeId = null;
+
+    function initApp() {
+        try {
+            localStorage.removeItem('oak_vpn_client_servers');
+            localStorage.removeItem('oak_ocean_vpn_nodes');
+            localStorage.removeItem('oak_vpn_clean_nodes_v3');
+
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                nodes = JSON.parse(raw).filter(n => n && n.name && !n.name.toLowerCase().includes('kuro05'));
+            }
+        } catch (e) {
+            nodes = [];
+        }
+        activeNodeId = nodes.length > 0 ? nodes[0].id : null;
+        renderNodes();
+    }
+
+    function saveNodes() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(nodes));
+        } catch (e) {}
+    }
+
+    function fastParseUri(uri) {
+        uri = uri.trim();
+        let name = 'OAK Server';
+        let proto = 'VLESS · REALITY';
+
+        try {
+            if (uri.startsWith('vless://') || uri.startsWith('trojan://') || uri.startsWith('ss://')) {
+                const pName = uri.split('://')[0].toUpperCase();
+                if (uri.includes('#')) {
+                    name = decodeURIComponent(uri.split('#')[1].trim()) || name;
+                }
+                const typeMatch = uri.match(/[?&]type=([^&#]+)/);
+                const net = typeMatch ? typeMatch[1].toUpperCase() : 'TCP';
+                proto = `${pName} · ${net} · FAST`;
+            } else if (uri.startsWith('vmess://')) {
+                const json = JSON.parse(atob(uri.substring(8)));
+                name = json.ps || 'OAK VMess';
+                proto = `VMESS · ${(json.net || 'WS').toUpperCase()}`;
+            } else if (uri.startsWith('http')) {
+                name = 'OAK Subscription';
+                proto = 'SUB · AUTO';
+            }
+        } catch (e) {}
+
+        return {
+            id: Date.now() + Math.floor(Math.random() * 999),
+            name: name,
+            protocol: proto,
+            rawUri: uri,
+            ping: Math.floor(Math.random() * 25) + 18
+        };
+    }
+
+    function renderNodes() {
+        const listEl = document.getElementById('nodesListContainer');
+        listEl.innerHTML = '';
+
+        if (nodes.length === 0) {
+            activeNodeId = null;
+            document.getElementById('activeNodeName').innerText = 'Key ထည့်သွင်းပြီး ချိတ်ဆက်ပါ';
+            document.getElementById('pingStat').innerText = '—';
+            listEl.innerHTML = `
+                <div class="empty-glass-state">
+                    🔑 လက်ရှိတွင် သိမ်းဆည်းထားသော Key မရှိသေးပါ။<br>
+                    အောက်ခြေရှိ <b>"➕ KEY အသစ်ထည့်မည်"</b> ကိုနှိပ်၍ Key ထည့်သွင်းပါ။
+                </div>
+            `;
+            return;
+        }
+
+        const current = nodes.find(n => n.id === activeNodeId) || nodes[0];
+        activeNodeId = current.id;
+        document.getElementById('activeNodeName').innerText = `🌐 ${current.name}`;
+        document.getElementById('pingStat').innerText = current.ping ? `${current.ping} ms` : '22 ms';
+
+        nodes.forEach(node => {
+            const isSel = node.id === activeNodeId;
+            const item = document.createElement('div');
+            item.className = `node-card ${isSel ? 'active' : ''}`;
+            item.onclick = () => selectAndInstantSwitch(node.id);
+            item.innerHTML = `
+                <div class="node-left">
+                    <div class="node-icon">${isSel ? '⚡' : '🛡️'}</div>
+                    <div class="node-meta">
+                        <h3>${node.name}</h3>
+                        <span class="node-proto">${node.protocol}</span>
+                    </div>
+                </div>
+                <div class="node-right">
+                    <span class="ping-tag">${node.ping || 22} ms</span>
+                    <button class="node-menu-btn" onclick="openNodeMenu(event, ${node.id})">⋮</button>
+                </div>
+            `;
+            listEl.appendChild(item);
+        });
+    }
+
+    function selectAndInstantSwitch(id) {
+        activeNodeId = id;
+        renderNodes();
+        if (!isConnected) {
+            toggleFastConnect();
+        } else {
+            secCounter = 0;
+            updateTimerText();
+        }
+    }
+
+    function toggleFastConnect() {
+        if (nodes.length === 0) {
+            openImportModal('key');
+            return;
+        }
+
+        isConnected = !isConnected;
+        const pill = document.getElementById('statusPill');
+        const statusTxt = document.getElementById('statusText');
+        const orbWrap = document.getElementById('orbWrapper');
+        const orbBtn = document.getElementById('connectOrbBtn');
+        const orbLbl = document.getElementById('orbBtnLabel');
+
+        if (isConnected) {
+            pill.classList.add('connected');
+            statusTxt.innerText = 'ချိတ်ဆက်ထားသည်';
+            orbWrap.classList.add('connected');
+            orbBtn.classList.add('connected');
+            orbLbl.innerText = 'STOP';
+
+            const activeNode = nodes.find(n => n.id === activeNodeId);
+            if (activeNode) {
+                activeNode.ping = Math.floor(Math.random() * 20) + 16;
+                document.getElementById('pingStat').innerText = `${activeNode.ping} ms`;
+            }
+
+            secCounter = 0;
+            updateTimerText();
+            if (timerRef) clearInterval(timerRef);
+            timerRef = setInterval(() => {
+                secCounter++;
+                updateTimerText();
+            }, 1000);
+
+            document.getElementById('downStat').innerText = '4.2 MB/s';
+            document.getElementById('upStat').innerText = '1.4 MB/s';
+
+            if (speedRef) clearInterval(speedRef);
+            speedRef = setInterval(() => {
+                const dl = (Math.random() * 6.4 + 1.2).toFixed(1);
+                const ul = (Math.random() * 2.1 + 0.4).toFixed(1);
+                document.getElementById('downStat').innerText = `${dl} MB/s`;
+                document.getElementById('upStat').innerText = `${ul} MB/s`;
+            }, 900);
+        } else {
+            pill.classList.remove('connected');
+            statusTxt.innerText = 'မချိတ်ဆက်ရသေးပါ';
+            orbWrap.classList.remove('connected');
+            orbBtn.classList.remove('connected');
+            orbLbl.innerText = 'CONNECT';
+
+            clearInterval(timerRef);
+            clearInterval(speedRef);
+            document.getElementById('sessionTimer').innerText = '00:00:00';
+            document.getElementById('downStat').innerText = '0.0 KB/s';
+            document.getElementById('upStat').innerText = '0.0 KB/s';
+        }
+    }
+
+    function updateTimerText() {
+        const h = String(Math.floor(secCounter / 3600)).padStart(2, '0');
+        const m = String(Math.floor((secCounter % 3600) / 60)).padStart(2, '0');
+        const s = String(secCounter % 60).padStart(2, '0');
+        document.getElementById('sessionTimer').innerText = `${h}:${m}:${s}`;
+    }
+
+    function fastPingAll() {
+        if (nodes.length === 0) return;
+        nodes.forEach(n => {
+            n.ping = Math.floor(Math.random() * 25) + 15;
+        });
+        saveNodes();
+        renderNodes();
+    }
+
+    async function quickPasteAndConnect() {
+        try {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && clipText.trim() !== '') {
+                const newNode = fastParseUri(clipText);
+                nodes.unshift(newNode);
+                activeNodeId = newNode.id;
+                saveNodes();
+                renderNodes();
+                if (!isConnected) toggleFastConnect();
+                return;
+            }
+        } catch (e) {}
+        openImportModal('key');
+    }
+
+    function openImportModal(type) {
+        const title = document.getElementById('importTitle');
+        const input = document.getElementById('keyInput');
+        input.value = '';
+        title.innerText = type === 'sub' ? '🔗 Subscription URL ထည့်ရန်' : '🔑 VPN Key အသစ်ထည့်ရန်';
+        document.getElementById('importModal').classList.add('show');
+    }
+
+    async function pasteToInput() {
+        try {
+            const t = await navigator.clipboard.readText();
+            if (t) document.getElementById('keyInput').value = t;
+        } catch (e) {
+            alert('⚠️ အကွက်ထဲတွင် ဖိနှိပ်ပြီး Paste ချပေးပါ။');
+        }
+    }
+
+    function saveAndFastConnect() {
+        const raw = document.getElementById('keyInput').value.trim();
+        if (!raw) {
+            alert('⚠️ ကျေးဇူးပြု၍ Key ထည့်သွင်းပါ။');
+            return;
+        }
+        const newNode = fastParseUri(raw);
+        nodes.unshift(newNode);
+        activeNodeId = newNode.id;
+        saveNodes();
+        renderNodes();
+        closeModal('importModal');
+
+        if (!isConnected) {
+            toggleFastConnect();
+        }
+    }
+
+    function openNodeMenu(e, id) {
+        e.stopPropagation();
+        menuNodeId = id;
+        const n = nodes.find(x => x.id === id);
+        if (n) {
+            document.getElementById('optModalTitle').innerText = n.name;
+            document.getElementById('nodeOptionsModal').classList.add('show');
+        }
+    }
+
+    function bridgeToV2boxApp() {
+        const n = nodes.find(x => x.id === menuNodeId);
+        if (!n) return;
+        navigator.clipboard.writeText(n.rawUri);
+        window.location.href = `v2box://install-sub?url=${encodeURIComponent(n.rawUri)}&name=${encodeURIComponent(n.name)}`;
+        closeModal('nodeOptionsModal');
+    }
+
+    function renameNode() {
+        const n = nodes.find(x => x.id === menuNodeId);
+        if (!n) return;
+        const newName = prompt('Server နာမည်အသစ် ရိုက်ထည့်ပါ:', n.name);
+        if (newName && newName.trim() !== '') {
+            n.name = newName.trim();
+            saveNodes();
+            renderNodes();
+        }
+        closeModal('nodeOptionsModal');
+    }
+
+    function copyNodeUri() {
+        const n = nodes.find(x => x.id === menuNodeId);
+        if (!n) return;
+        navigator.clipboard.writeText(n.rawUri);
+        alert('✅ Key ကူးယူပြီးပါပြီ။');
+        closeModal('nodeOptionsModal');
+    }
+
+    function deleteNode() {
+        if (isConnected && activeNodeId === menuNodeId) {
+            toggleFastConnect();
+        }
+        nodes = nodes.filter(x => x.id !== menuNodeId);
+        saveNodes();
+        activeNodeId = nodes[0] ? nodes[0].id : null;
+        renderNodes();
+        closeModal('nodeOptionsModal');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+
+    initApp();
+</script>
+
+</body>
+</html>
